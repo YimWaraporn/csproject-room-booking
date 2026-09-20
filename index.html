@@ -820,10 +820,6 @@
       if (!silent) toast("เวลาสิ้นสุดต้องอยู่หลังเวลาเริ่ม");
       return;
     }
-    if (start < "12:00" && end > "12:00") {
-      if (!silent) toast("ช่วงเวลาสอบต้องไม่คาบพักกลางวัน (12.00-13.00 น.) กรุณาเลือกช่วงเช้าหรือช่วงบ่ายแยกกัน");
-      return;
-    }
     lastQuery = { date, start, end };
     const dow = new Date(date + "T00:00:00").getDay();
 
@@ -1229,9 +1225,8 @@
   function updateEndOptions() {
     const start = $("#q-start").value || "08:00";
     const prevEnd = $("#q-end").value;
-    // Only offer times strictly after the chosen start, and never crossing
-    // the 12:00-13:00 lunch break.
-    const validEnds = HOUR_SLOTS.filter(t => t > start && !(start < "12:00" && t > "12:00"));
+    // Only offer times strictly after the chosen start time.
+    const validEnds = HOUR_SLOTS.filter(t => t > start);
     $("#q-end").innerHTML = validEnds.map(t => '<option value="' + t + '">' + t + ' น.</option>').join("");
     if (validEnds.includes(prevEnd)) {
       $("#q-end").value = prevEnd;
