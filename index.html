@@ -888,7 +888,7 @@
 
       const dupBooking = bookings.find(b =>
         b.status !== "cancelled" &&
-        (b.studentId || "").trim().toLowerCase() === sid.toLowerCase() &&
+        String(b.studentId || "").trim().toLowerCase() === sid.toLowerCase() &&
         String(b.subject) === String(subject)
       );
       if (dupBooking) {
@@ -931,7 +931,7 @@
       runSearch(true);
     } catch (e) {
       console.error(e);
-      toast("บันทึกการจองไม่สำเร็จ กรุณาลองใหม่");
+      toast("บันทึกการจองไม่สำเร็จ: " + (e && e.message ? e.message : "ไม่ทราบสาเหตุ"));
     } finally {
       btn.disabled = false;
       btn.textContent = originalBtnText;
@@ -968,7 +968,7 @@
     const ids = new Set(myBookingIds());
     const mine = bookings.filter(b =>
       ids.has(b.id) ||
-      (mineSearchSid && (b.studentId || "").trim().toLowerCase() === mineSearchSid.toLowerCase())
+      (mineSearchSid && String(b.studentId || "").trim().toLowerCase() === mineSearchSid.toLowerCase())
     );
     const tbody = $("#mine-table tbody");
     if (mine.length === 0) {
@@ -1013,7 +1013,7 @@
     await cancelBooking(id);
     $("#b-subject").value = b.subject || "";
     $("#b-name").value = b.bookerName || "";
-    $("#b-sid").value = b.studentId || "";
+    $("#b-sid").value = String(b.studentId || "");
     $("#b-chair").value = b.examChair || "";
     document.querySelector('nav.tabs button[data-tab="book"]').click();
     toast("ยกเลิกรายการเดิมแล้ว เลือกวันเวลาที่ต้องการใหม่แล้วกดค้นหาห้องว่างได้เลย");
@@ -1027,7 +1027,7 @@
       await loadAll(true);
     } catch (e) {
       console.error(e);
-      toast("ยกเลิกไม่สำเร็จ");
+      toast("ยกเลิกไม่สำเร็จ: " + (e && e.message ? e.message : "ไม่ทราบสาเหตุ"));
     }
   }
 
@@ -1047,7 +1047,7 @@
       await loadAll(true);
     } catch (e) {
       console.error(e);
-      toast("เพิ่มห้องไม่สำเร็จ");
+      toast("เพิ่มห้องไม่สำเร็จ: " + (e && e.message ? e.message : "ไม่ทราบสาเหตุ"));
     }
   });
 
@@ -1069,7 +1069,7 @@
       btn.addEventListener("click", async () => {
         if (!db) return;
         try { await apiPost("deleteRoom", { id: btn.dataset.delRoom }); toast("ลบห้องแล้ว"); await loadAll(true); }
-        catch (e) { console.error(e); toast("ลบไม่สำเร็จ"); }
+        catch (e) { console.error(e); toast("ลบไม่สำเร็จ: " + (e && e.message ? e.message : "ไม่ทราบสาเหตุ")); }
       });
     });
   }
@@ -1114,7 +1114,7 @@
       await loadAll(true);
     } catch (e) {
       console.error(e);
-      toast("เพิ่มไม่สำเร็จ");
+      toast("เพิ่มไม่สำเร็จ: " + (e && e.message ? e.message : "ไม่ทราบสาเหตุ"));
     }
   });
 
@@ -1141,7 +1141,7 @@
       btn.addEventListener("click", async () => {
         if (!db) return;
         try { await apiPost("deleteSchedule", { id: btn.dataset.delSched }); toast("ลบคาบเรียนแล้ว"); await loadAll(true); }
-        catch (e) { console.error(e); toast("ลบไม่สำเร็จ"); }
+        catch (e) { console.error(e); toast("ลบไม่สำเร็จ: " + (e && e.message ? e.message : "ไม่ทราบสาเหตุ")); }
       });
     });
   }
@@ -1222,7 +1222,7 @@
       await loadAll(true);
     } catch (e) {
       console.error(e);
-      toast("นำเข้าไม่สำเร็จ กรุณาลองใหม่");
+      toast("นำเข้าไม่สำเร็จ: " + (e && e.message ? e.message : "ไม่ทราบสาเหตุ"));
     } finally {
       btn.disabled = false;
       btn.textContent = "นำเข้าห้อง + ตารางเรียนจากไฟล์ที่แนบ";
