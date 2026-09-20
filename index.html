@@ -894,9 +894,11 @@
       if (dupBooking) {
         const proceed = await showConfirmModal(
           "พบการจองเดิมของคุณ",
-          "คุณมีการจองไว้แล้วสำหรับวิชา " + dupBooking.subject + "\nห้อง " + dupBooking.roomName + " วันที่ " + dupBooking.date + " เวลา " + dupBooking.startTime + "–" + dupBooking.endTime + "\n\nต้องการจองรายการนี้เพิ่มอีกหรือไม่?"
+          "คุณมีการจองไว้แล้วสำหรับวิชา " + dupBooking.subject + "\nห้อง " + dupBooking.roomName + " วันที่ " + dupBooking.date + " เวลา " + dupBooking.startTime + "–" + dupBooking.endTime + "\n\nหากยืนยันจองห้องหรือวันเวลาใหม่นี้ จะยกเลิกอันเดิมที่เคยจองในระบบไว้"
         );
         if (!proceed) { $("#form-sheet").style.display = "none"; return; }
+        btn.textContent = "กำลังยกเลิกรายการเดิม...";
+        await apiPost("cancelBooking", { id: dupBooking.id });
       }
 
       const dow = new Date(lastQuery.date + "T00:00:00").getDay();
