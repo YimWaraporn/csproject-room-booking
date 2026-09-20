@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ระบบจองห้องสอบ 204491, 204496, 204499_1-2569</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Taviraj:wght@500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #EFEBE1;
+    --surface: #FFFFFF;
+    --ink: #202A3B;
+    --ink-soft: #5B6478;
+    --accent: #2C6E62;
+    --accent-ink: #FFFFFF;
+    --warn: #A8402F;
+    --warn-bg: #F7E9E5;
+    --gold: #B4842A;
+    --gold-bg: #F6EDDB;
+    --avail-bg: #E7F0EA;
+    --border: #D6CFBE;
+    --border-strong: #B8AF98;
+    --radius: 3px;
+    --font-display: 'Taviraj', 'Noto Serif Thai', Georgia, serif;
+    --font-body: 'Sarabun', 'Noto Sans Thai', system-ui, sans-serif;
+  }
+  :root:not([data-theme="light"]) {
+    @media (prefers-color-scheme: dark) {
+      --bg: #171B22;
+      --surface: #1F2530;
+      --ink: #E9E6DC;
+      --ink-soft: #9EA6B8;
+      --accent: #57A896;
+      --accent-ink: #0D1512;
+      --warn: #DD8A76;
+      --warn-bg: #3A2621;
+      --gold: #E0B45B;
+      --gold-bg: #362D18;
+      --avail-bg: #1E2E27;
+      --border: #333B48;
+      --border-strong: #454F5F;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #171B22;
+    --surface: #1F2530;
+    --ink: #E9E6DC;
+    --ink-soft: #9EA6B8;
+    --accent: #57A896;
+    --accent-ink: #0D1512;
+    --warn: #DD8A76;
+    --warn-bg: #3A2621;
+    --gold: #E0B45B;
+    --gold-bg: #362D18;
+    --avail-bg: #1E2E27;
+    --border: #333B48;
+    --border-strong: #454F5F;
+  }
+
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.55;
+  }
+  body { min-height: 100vh; padding-bottom: 60px; }
+
+  .wrap { max-width: 860px; margin: 0 auto; padding: 0 18px; }
+
+  header.top {
+    border-bottom: 1px solid var(--border-strong);
+    padding: 28px 0 0;
+    background: var(--bg);
+  }
+  header.top h1 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: clamp(24px, 5vw, 32px);
+    margin: 0 0 4px;
+    letter-spacing: 0.2px;
+  }
+  header.top p.sub {
+    color: var(--ink-soft);
+    margin: 0 0 20px;
+    font-size: 14px;
+    max-width: 60ch;
+  }
+
+  nav.tabs {
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+  }
+  nav.tabs button {
+    font-family: var(--font-body);
+    font-size: 14.5px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    background: none;
+    border: none;
+    padding: 10px 4px 12px;
+    margin-right: 22px;
+    cursor: pointer;
+    border-bottom: 2.5px solid transparent;
+    white-space: nowrap;
+  }
+  nav.tabs button.active {
+    color: var(--ink);
+    border-bottom-color: var(--accent);
+  }
+  nav.tabs button:hover:not(.active) { color: var(--ink); }
+
+  main { padding-top: 22px; }
+  section.panel { display: none; }
+  section.panel.active { display: block; }
+
+  .sheet {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 18px 20px;
+    margin-bottom: 18px;
+  }
+  .sheet > h2 {
+    font-family: var(--font-display);
+    font-size: 17px;
+    font-weight: 600;
+    margin: 0 0 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .sheet > h2 span.count {
+    color: var(--ink-soft);
+    font-family: var(--font-body);
+    font-weight: 400;
+    font-size: 13px;
+  }
+
+  .field-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .field { display: flex; flex-direction: column; gap: 5px; }
+  .field label {
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    font-weight: 600;
+  }
+  .field input, .field select, .field textarea {
+    font-family: var(--font-body);
+    font-size: 14.5px;
+    padding: 9px 10px;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    background: var(--surface);
+    color: var(--ink);
+  }
+  .field input:focus, .field select:focus, .field textarea:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+  }
+  .field textarea { resize: vertical; min-height: 56px; }
+
+  button.btn {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 14.5px;
+    padding: 10px 18px;
+    border-radius: var(--radius);
+    border: 1px solid var(--accent);
+    background: var(--accent);
+    color: var(--accent-ink);
+    cursor: pointer;
+  }
+  button.btn:hover { filter: brightness(1.08); }
+  button.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  button.btn.secondary {
+    background: transparent;
+    color: var(--ink);
+    border-color: var(--border-strong);
+  }
+  button.btn.danger {
+    background: transparent;
+    color: var(--warn);
+    border-color: var(--warn);
+    font-size: 13px;
+    padding: 6px 10px;
+  }
+  button.btn.small {
+    font-size: 13px;
+    padding: 6px 12px;
+  }
+
+  .room-list { display: flex; flex-direction: column; gap: 10px; }
+  .room-card {
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--border-strong);
+    border-radius: var(--radius);
+    padding: 12px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .room-card.available { border-left-color: var(--accent); background: var(--avail-bg); }
+  .room-card.busy { border-left-color: var(--warn); background: var(--warn-bg); opacity: 0.85; }
+  .room-card.toosmall { border-left-color: var(--gold); background: var(--gold-bg); opacity: 0.85; }
+  .room-card .rc-name { font-weight: 700; font-size: 15px; }
+  .room-card .rc-meta { color: var(--ink-soft); font-size: 13px; }
+  .room-card .rc-status { font-size: 12.5px; font-weight: 600; }
+  .room-card.available .rc-status { color: var(--accent); }
+  .room-card.busy .rc-status { color: var(--warn); }
+  .room-card.toosmall .rc-status { color: var(--gold); }
+  .room-card .rc-reason { font-size: 12.5px; color: var(--ink-soft); margin-top: 2px; }
+
+  table.grid {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+  }
+  table.grid th, table.grid td {
+    text-align: left;
+    padding: 8px 6px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  table.grid th {
+    color: var(--ink-soft);
+    font-weight: 600;
+    font-size: 12.5px;
+  }
+  table.grid tbody tr:last-child td { border-bottom: none; }
+  .scroll-x { overflow-x: auto; }
+
+  .empty {
+    color: var(--ink-soft);
+    font-size: 13.5px;
+    padding: 14px 4px;
+    text-align: center;
+  }
+
+  .tag {
+    display: inline-block;
+    font-size: 11.5px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: var(--radius);
+    background: var(--border);
+    color: var(--ink);
+  }
+  .day-picker { display: flex; gap: 6px; flex-wrap: wrap; }
+  .day-picker button {
+    font-family: var(--font-body);
+    font-size: 13px;
+    padding: 7px 10px;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    background: var(--surface);
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .day-picker button.sel { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+
+  .banner {
+    border: 1px solid var(--border-strong);
+    background: var(--gold-bg);
+    color: var(--ink);
+    border-radius: var(--radius);
+    padding: 10px 12px;
+    font-size: 13.5px;
+    margin-bottom: 16px;
+  }
+  .toast {
+    position: fixed;
+    bottom: 18px; left: 50%;
+    transform: translateX(-50%);
+    background: var(--ink);
+    color: var(--bg);
+    padding: 10px 18px;
+    border-radius: var(--radius);
+    font-size: 13.5px;
+    z-index: 50;
+    max-width: 90vw;
+    text-align: center;
+  }
+  .admin-sub { display: flex; gap: 4px; margin-bottom: 16px; flex-wrap: wrap; }
+  .admin-sub button {
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 7px 12px;
+    border: 1px solid var(--border-strong);
+    background: var(--surface);
+    color: var(--ink-soft);
+    border-radius: var(--radius);
+    cursor: pointer;
+  }
+  .admin-sub button.active { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .sub-panel { display: none; }
+  .sub-panel.active { display: block; }
+  .hint { font-size: 12.5px; color: var(--ink-soft); margin: -6px 0 12px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <h1 id="app-title" style="cursor:default; user-select:none;">ระบบจองห้องสอบ 204491, 204496, 204499_1-2569</h1>
+    <p class="sub">จองห้องสอบกระบวนวิชา 204491, 204496 และ 204499 ในระหว่างวันที่ 5-22 ตุลาคม 2569 (เว้นเสาร์-อาทิตย์) โดยกำหนดการสอบครั้งละ 1 ชั่วโมง</p>
+    <nav class="tabs">
+      <button data-tab="book" class="active">จองห้องสอบ</button>
+      <button data-tab="mine">การจองของฉัน</button>
+      <button data-tab="admin" id="admin-tab-btn" style="display:none;">จัดการระบบ</button>
+    </nav>
+  </header>
+
+  <div id="pin-modal-overlay" style="display:none; position:fixed; inset:0; background:rgba(20,20,20,0.45); z-index:100; align-items:center; justify-content:center; padding:16px;">
+    <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:20px; max-width:280px; width:100%;">
+      <h3 style="margin:0 0 12px; font-family:var(--font-display); font-size:16px; font-weight:600;">ใส่ PIN ผู้ดูแลระบบ</h3>
+      <input type="password" id="pin-input" inputmode="numeric" autocomplete="off"
+        style="width:100%; padding:9px 10px; border:1px solid var(--border-strong); border-radius:var(--radius); font-size:15px; margin-bottom:12px; background:var(--surface); color:var(--ink); box-sizing:border-box;"
+        placeholder="PIN">
+      <div style="display:flex; gap:8px;">
+        <button class="btn" id="pin-submit-btn" style="flex:1;">ยืนยัน</button>
+        <button class="btn secondary" id="pin-cancel-btn" style="flex:1;">ยกเลิก</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="confirm-modal-overlay" style="display:none; position:fixed; inset:0; background:rgba(20,20,20,0.45); z-index:100; align-items:center; justify-content:center; padding:16px;">
+    <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:20px; max-width:340px; width:100%;">
+      <h3 id="confirm-modal-title" style="margin:0 0 10px; font-family:var(--font-display); font-size:16px; font-weight:600;"></h3>
+      <p id="confirm-modal-msg" style="margin:0 0 16px; font-size:13.5px; color:var(--ink-soft); white-space:pre-line;"></p>
+      <div style="display:flex; gap:8px;">
+        <button class="btn" id="confirm-modal-yes-btn" style="flex:1;">ยืนยัน</button>
+        <button class="btn secondary" id="confirm-modal-no-btn" style="flex:1;">ยกเลิก</button>
+      </div>
+    </div>
+  </div>
+
+  <main>
+    <!-- BOOK TAB -->
+    <section class="panel active" id="panel-book">
+      <div class="sheet">
+        <h2>1. ระบุวันและเวลาที่ต้องการสอบ</h2>
+        <div class="field-row">
+          <div class="field">
+            <label for="q-date">วันที่สอบ</label>
+            <select id="q-date"></select>
+          </div>
+          <div class="field">
+            <label for="q-start">เวลาเริ่ม</label>
+            <select id="q-start"></select>
+          </div>
+          <div class="field">
+            <label for="q-end">เวลาสิ้นสุด</label>
+            <select id="q-end"></select>
+          </div>
+        </div>
+        <button class="btn" id="search-btn">ค้นหาห้องว่าง</button>
+      </div>
+
+      <div class="sheet" id="results-sheet" style="display:none;">
+        <h2>2. เลือกห้องที่ว่าง</h2>
+        <div class="room-list" id="room-list"></div>
+      </div>
+
+      <div class="sheet" id="form-sheet" style="display:none;">
+        <h2>3. กรอกรายละเอียดการจอง — <span id="chosen-room-label"></span></h2>
+        <div class="field-row">
+          <div class="field">
+            <label for="b-subject">กระบวนวิชา</label>
+            <select id="b-subject">
+              <option value="">— เลือกกระบวนวิชา —</option>
+              <option value="204491">204491</option>
+              <option value="204496">204496</option>
+              <option value="204499">204499</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="b-name">ชื่อผู้จอง</label>
+            <input type="text" id="b-name" placeholder="ชื่อ-นามสกุล">
+          </div>
+          <div class="field">
+            <label for="b-sid">รหัสนักศึกษา</label>
+            <input type="text" id="b-sid">
+          </div>
+          <div class="field">
+            <label for="b-chair">อาจารย์ (ประธานสอบ)</label>
+            <select id="b-chair"></select>
+          </div>
+        </div>
+        <div style="display:flex; gap:10px; margin-top:6px;">
+          <button class="btn" id="confirm-book-btn">ยืนยันการจอง</button>
+          <button class="btn secondary" id="cancel-form-btn">ยกเลิก</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- MINE TAB -->
+    <section class="panel" id="panel-mine">
+      <div class="sheet">
+        <h2>ค้นหาการจองของฉัน</h2>
+        <div class="field-row" style="margin-bottom:4px;">
+          <div class="field">
+            <label for="mine-search-sid">รหัสนักศึกษา</label>
+            <input type="text" id="mine-search-sid" placeholder="กรอกรหัสนักศึกษาของคุณ">
+          </div>
+        </div>
+        <button class="btn" id="mine-search-btn">ค้นหา</button>
+        <div class="hint" style="margin-top:10px;">ค้นด้วยรหัสนักศึกษาจะเจอการจองของคุณไม่ว่าจะเปิดจากเครื่อง/เบราว์เซอร์ไหนก็ตาม</div>
+      </div>
+      <div class="sheet">
+        <h2>ผลการค้นหา</h2>
+        <div class="scroll-x">
+          <table class="grid" id="mine-table">
+            <thead><tr><th>วันที่</th><th>เวลา</th><th>ห้อง</th><th>วิชา/โปรเจกต์</th><th>ประธานสอบ</th><th></th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="empty" id="mine-empty" style="display:none;">ยังไม่มีการจองที่ตรงกับรหัสนักศึกษานี้ (หรือยังไม่ได้ค้นหา)</div>
+      </div>
+    </section>
+
+    <!-- ADMIN TAB -->
+    <section class="panel" id="panel-admin">
+      <div class="banner">แท็บนี้ไม่ปรากฏในเมนูปกติ เข้าถึงได้โดยคลิกชื่อระบบ 5 ครั้งแล้วใส่ PIN เท่านั้น — อย่าบอก PIN ให้นักศึกษา</div>
+      <div class="admin-sub">
+        <button data-sub="rooms" class="active">ห้องสอบ</button>
+        <button data-sub="schedule">ตารางเรียนประจำสัปดาห์</button>
+        <button data-sub="bookings">รายการจองทั้งหมด</button>
+      </div>
+
+      <div class="sub-panel active" id="sub-rooms">
+        <div class="sheet">
+          <h2>นำเข้าข้อมูลเริ่มต้น</h2>
+          <p class="hint" style="margin-top:-2px;">นำเข้ารายชื่อห้อง (CSB201, 202, 203, 204, 207, 209, 210) และตารางเรียนประจำสัปดาห์ที่แปลงมาจากไฟล์ตารางสอนภาคเรียนที่ 1/2569 ที่ให้ไว้ ระบบจะข้ามห้องที่มีชื่อซ้ำอยู่แล้วให้อัตโนมัติ</p>
+          <button class="btn secondary" id="import-seed-btn">นำเข้าห้อง + ตารางเรียนจากไฟล์ที่แนบ</button>
+        </div>
+        <div class="sheet">
+          <h2>เพิ่มห้องสอบ</h2>
+          <div class="field-row">
+            <div class="field"><label for="r-name">ชื่อ/รหัสห้อง</label><input type="text" id="r-name" placeholder="เช่น SC301"></div>
+            <div class="field"><label for="r-building">อาคาร</label><input type="text" id="r-building"></div>
+            <div class="field"><label for="r-floor">ชั้น</label><input type="text" id="r-floor"></div>
+            <div class="field"><label for="r-capacity">ความจุ (ที่นั่ง)</label><input type="number" id="r-capacity" min="1"></div>
+            <div class="field"><label for="r-type">ประเภทห้อง</label><input type="text" id="r-type" placeholder="เช่น บรรยาย, ปฏิบัติการ"></div>
+          </div>
+          <button class="btn" id="add-room-btn">เพิ่มห้อง</button>
+        </div>
+        <div class="sheet">
+          <h2>รายชื่อห้องทั้งหมด <span class="count" id="rooms-count"></span></h2>
+          <div class="scroll-x">
+            <table class="grid" id="rooms-table">
+              <thead><tr><th>ห้อง</th><th>อาคาร/ชั้น</th><th>ความจุ</th><th>ประเภท</th><th></th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <div class="empty" id="rooms-empty" style="display:none;">ยังไม่มีห้องในระบบ เพิ่มห้องแรกได้ที่ฟอร์มด้านบน</div>
+        </div>
+      </div>
+
+      <div class="sub-panel" id="sub-schedule">
+        <div class="sheet">
+          <h2>เพิ่มคาบเรียนประจำสัปดาห์</h2>
+          <div class="field">
+            <label>วันในสัปดาห์</label>
+            <div class="day-picker" id="s-day-picker">
+              <button data-day="1">จันทร์</button><button data-day="2">อังคาร</button><button data-day="3">พุธ</button>
+              <button data-day="4">พฤหัสฯ</button><button data-day="5">ศุกร์</button><button data-day="6">เสาร์</button><button data-day="0">อาทิตย์</button>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field"><label for="s-room">ห้อง</label><select id="s-room"></select></div>
+            <div class="field"><label for="s-start">เวลาเริ่ม</label><input type="time" id="s-start"></div>
+            <div class="field"><label for="s-end">เวลาสิ้นสุด</label><input type="time" id="s-end"></div>
+            <div class="field"><label for="s-subject">รายวิชา</label><input type="text" id="s-subject"></div>
+          </div>
+          <button class="btn" id="add-schedule-btn">เพิ่มคาบเรียน</button>
+        </div>
+        <div class="sheet">
+          <h2>ตารางเรียนทั้งหมด <span class="count" id="schedule-count"></span></h2>
+          <div class="scroll-x">
+            <table class="grid" id="schedule-table">
+              <thead><tr><th>วัน</th><th>เวลา</th><th>ห้อง</th><th>วิชา</th><th></th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <div class="empty" id="schedule-empty" style="display:none;">ยังไม่มีข้อมูลตารางเรียน</div>
+        </div>
+      </div>
+
+      <div class="sub-panel" id="sub-bookings">
+        <div class="sheet">
+          <h2>รายการจองห้องสอบทั้งหมด <span class="count" id="bookings-count"></span></h2>
+          <div class="scroll-x">
+            <table class="grid" id="bookings-table">
+              <thead><tr><th>วันที่</th><th>เวลา</th><th>ห้อง</th><th>วิชา/โปรเจกต์</th><th>ผู้จอง</th><th>ประธานสอบ</th><th></th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <div class="empty" id="bookings-empty" style="display:none;">ยังไม่มีการจอง</div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  const DAY_LABEL = {0:"อาทิตย์",1:"จันทร์",2:"อังคาร",3:"พุธ",4:"พฤหัสฯ",5:"ศุกร์",6:"เสาร์"};
+
+  // ช่วงสอบโปรเจกต์ 5-22 ต.ค. 2569 เว้นเสาร์-อาทิตย์ และ 13 ต.ค. (วันนวมินทรมหาราช)
+  const EXAM_DATES = ["2026-10-05","2026-10-06","2026-10-07","2026-10-08","2026-10-09",
+    "2026-10-12","2026-10-14","2026-10-15","2026-10-16",
+    "2026-10-19","2026-10-20","2026-10-21","2026-10-22"];
+  const HOUR_SLOTS = ["08:00","09:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00"];
+  const ADMIN_PIN = "6737";
+
+  // Admin tab is hidden from the normal menu. Clicking the page title 5 times
+  // within 3 seconds opens an in-page PIN box (not window.prompt, since
+  // sandboxed iframes like Google Sites' embed block native popup dialogs).
+  // Only the correct PIN reveals the tab.
+  let titleClickCount = 0;
+  let titleClickTimer = null;
+  function checkAdminAccess() {
+    titleClickCount++;
+    if (titleClickTimer) clearTimeout(titleClickTimer);
+    titleClickTimer = setTimeout(() => { titleClickCount = 0; }, 3000);
+    if (titleClickCount >= 5) {
+      titleClickCount = 0;
+      openPinModal();
+    }
+  }
+  $("#app-title").addEventListener("click", checkAdminAccess);
+
+  function openPinModal() {
+    $("#pin-input").value = "";
+    $("#pin-modal-overlay").style.display = "flex";
+    setTimeout(() => $("#pin-input").focus(), 50);
+  }
+  function closePinModal() {
+    $("#pin-modal-overlay").style.display = "none";
+  }
+  function submitPin() {
+    const entered = $("#pin-input").value.trim();
+    if (entered === ADMIN_PIN) {
+      closePinModal();
+      $("#admin-tab-btn").style.display = "";
+      toast("ปลดล็อกแท็บจัดการระบบแล้ว");
+    } else {
+      toast("PIN ไม่ถูกต้อง");
+      $("#pin-input").value = "";
+      $("#pin-input").focus();
+    }
+  }
+  $("#pin-submit-btn").addEventListener("click", submitPin);
+  $("#pin-cancel-btn").addEventListener("click", closePinModal);
+  $("#pin-input").addEventListener("keydown", (e) => {
+    if (e.key === "Enter") submitPin();
+    if (e.key === "Escape") closePinModal();
+  });
+
+  // ---------- Generic confirm modal (not window.confirm(), which sandboxed iframes block) ----------
+  let confirmModalResolve = null;
+  function showConfirmModal(title, msg) {
+    $("#confirm-modal-title").textContent = title;
+    $("#confirm-modal-msg").textContent = msg;
+    $("#confirm-modal-overlay").style.display = "flex";
+    return new Promise(resolve => { confirmModalResolve = resolve; });
+  }
+  function closeConfirmModal(result) {
+    $("#confirm-modal-overlay").style.display = "none";
+    if (confirmModalResolve) { confirmModalResolve(result); confirmModalResolve = null; }
+  }
+  $("#confirm-modal-yes-btn").addEventListener("click", () => closeConfirmModal(true));
+  $("#confirm-modal-no-btn").addEventListener("click", () => closeConfirmModal(false));
+
+  const TEACHERS = [
+    "อาจารย์ ดร.กมลภพ ศรีโสภา",
+    "ผู้ช่วยศาสตราจารย์ ดร.กรพรหม พิกุลแก้ว",
+    "อาจารย์กิตติพิชญ์ คุปตะวาณิช",
+    "ผู้ช่วยศาสตราจารย์ ดร.คึกฤทธิ์ โอสถานันต์กุล",
+    "รองศาสตราจารย์ ดร.จักรเมธ บุตรกระจ่าง",
+    "ผู้ช่วยศาสตราจารย์ ดร.จักริน ชวชาติ",
+    "รองศาสตราจารย์ ดร.จีรยุทธ ไชยจารุวณิช",
+    "รองศาสตราจารย์ ดร.ชุมพล บุญคุ้มพรภัทร",
+    "ผู้ช่วยศาสตราจารย์ ดร.ฐาปนพงษ์ รักกาญจนันท์",
+    "ผู้ช่วยศาสตราจารย์ ดร.ดุษฎี ประเสริฐธิติพงษ์",
+    "อาจารย์ ดร.นพรัตน์ วนิชชานันท์",
+    "ผู้ช่วยศาสตราจารย์เบญจมาศ ปัญญางาม",
+    "ผู้ช่วยศาสตราจารย์ ดร.ปภังกร อิ่นแก้ว",
+    "ผู้ช่วยศาสตราจารย์ ดร.ประภาพร เตชอังกูร",
+    "ผู้ช่วยศาสตราจารย์ ดร.ปราการ อุณจักร",
+    "ผู้ช่วยศาสตราจารย์ ดร.เมทินี เขียวกันยะ",
+    "รองศาสตราจารย์ ดร.รัฐสิทธิ์ สุขะหุต",
+    "ผู้ช่วยศาสตราจารย์ ดร.รัศมีทิพย์ วิตา",
+    "อาจารย์ ดร.วรวุฒิ ศรีสุขคำ",
+    "อาจารย์ ดร.วัชราภรณ์ ยาใจ",
+    "รองศาสตราจารย์ ดร.วัฒนา จินดาหลวง",
+    "รองศาสตราจารย์ ดร.วาริน เชาวทัต",
+    "ผู้ช่วยศาสตราจารย์วาสนา นัยโพธิ์",
+    "ผู้ช่วยศาสตราจารย์ ดร.วิจักษณ์ ศรีสัจจะเลิศวาจา",
+    "ผู้ช่วยศาสตราจารย์ ดร.ศุภกิจ อาวิพันธุ์",
+    "อาจารย์สิทธิโชค ทรัพย์ไพบูลย์กิจ",
+    "อาจารย์ ดร.สุธาสินี โทวุฒิกุล",
+    "ผู้ช่วยศาสตราจารย์ ดร.เสมอแข สมหอม",
+    "ผู้ช่วยศาสตราจารย์ ดร.อารีรัตน์ ตรงรัศมีทอง",
+    "รองศาสตราจารย์ ดร.เอกรัฐ บุญเชียง"
+  ];
+
+  const ROOMS_SEED = [
+    { name: "CSB201", building: "อาคาร CSB", capacity: 40, type: "บรรยาย" },
+    { name: "CSB202", building: "อาคาร CSB", capacity: 40, type: "บรรยาย" },
+    { name: "CSB203", building: "อาคาร CSB", capacity: 40, type: "บรรยาย" },
+    { name: "CSB204", building: "อาคาร CSB", capacity: 30, type: "บรรยาย" },
+    { name: "CSB207", building: "อาคาร CSB", capacity: 50, type: "บรรยาย" },
+    { name: "CSB209", building: "อาคาร CSB", capacity: 60, type: "บรรยาย" },
+    { name: "CSB210", building: "อาคาร CSB", capacity: 60, type: "บรรยาย" }
+  ];
+
+  // แปลงจากตารางการใช้ห้องเรียนภาคเรียนที่ 1/2569 (จันทร์-พฤหัส / อังคาร-ศุกร์)
+  // สมมติความยาวคาบ: 08.00-09.30, 09.30-11.00, 11.00-12.00, 13.00-14.30, 14.30-16.00
+  const SCHEDULE_SEED = [
+    ["CSB201",1,"13:00","14:30","204123"], ["CSB201",1,"14:30","16:00","204453"],
+    ["CSB201",2,"09:30","11:00","204111 (1)"], ["CSB201",2,"13:00","14:30","204203 (1)"], ["CSB201",2,"14:30","16:00","204231 (1)"],
+    ["CSB201",5,"09:30","11:00","204102 (701)"], ["CSB201",5,"13:00","14:30","204217 (2)"],
+
+    ["CSB202",1,"09:30","11:00","204252 (2)"], ["CSB202",4,"09:30","11:00","204252 (2)"],
+    ["CSB202",1,"13:00","14:30","204101 (4)"],
+    ["CSB202",2,"09:30","11:00","204451 (1)"], ["CSB202",5,"09:30","11:00","204451 (1)"],
+    ["CSB202",2,"13:00","14:30","204321 (1)"],
+    ["CSB202",2,"14:30","16:00","204325"], ["CSB202",5,"14:30","16:00","204325"],
+
+    ["CSB203",2,"09:30","11:00","204111 (2)"],
+    ["CSB203",2,"13:00","14:30","204171(701)"], ["CSB203",5,"13:00","14:30","204171(701)"],
+
+    ["CSB204",1,"09:30","11:00","204891"], ["CSB204",4,"09:30","11:00","204891"],
+    ["CSB204",1,"11:00","12:00","204732"], ["CSB204",4,"11:00","12:00","204732"],
+    ["CSB204",1,"14:30","16:00","204721"], ["CSB204",4,"14:30","16:00","204721"],
+    ["CSB204",2,"09:30","11:00","204712"], ["CSB204",5,"09:30","11:00","204712"],
+    ["CSB204",2,"14:30","16:00","204764"], ["CSB204",5,"14:30","16:00","204764"],
+
+    ["CSB207",1,"09:30","11:00","204361 (2)"], ["CSB207",1,"11:00","12:00","204341 (1)"], ["CSB207",1,"13:00","14:30","204102 (1)"],
+    ["CSB207",2,"09:30","11:00","204111 (3)"], ["CSB207",2,"14:30","16:00","204231 (2)"],
+    ["CSB207",4,"13:00","14:30","229323(1)"],
+    ["CSB207",5,"13:00","14:30","204102 (4)"],
+
+    ["CSB209",1,"09:30","11:00","204361 (1)"], ["CSB209",1,"11:00","12:00","204341 (2)"], ["CSB209",1,"13:00","14:30","204471"], ["CSB209",1,"14:30","16:00","204101(2)"],
+    ["CSB209",2,"09:30","11:00","204451 (2)"], ["CSB209",2,"11:00","12:00","204383"], ["CSB209",2,"13:00","14:30","204203 (2)"],
+    ["CSB209",4,"14:30","16:00","204102 (2)"],
+    ["CSB209",5,"13:00","14:30","204217 (1)"],
+
+    ["CSB210",1,"09:30","11:00","204252 (1)"], ["CSB210",1,"13:00","14:30","204101 (1)"], ["CSB210",1,"14:30","16:00","204101(3)"],
+    ["CSB210",2,"09:30","11:00","204320"], ["CSB210",2,"11:00","12:00","204251 (702)"], ["CSB210",2,"13:00","14:30","204321 (2)"], ["CSB210",2,"14:30","16:00","204371"],
+    ["CSB210",4,"13:00","14:30","229323(2)"], ["CSB210",4,"14:30","16:00","204102 (3)"],
+    ["CSB210",5,"13:00","14:30","204426"]
+  ];
+
+  let db = null;
+  let rooms = [];
+  let schedule = [];
+  let bookings = [];
+  let selectedDay = null;
+  let chosenRoom = null;
+  let lastQuery = null;
+
+  function $(sel) { return document.querySelector(sel); }
+  function $all(sel) { return Array.from(document.querySelectorAll(sel)); }
+  function escapeHtml(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  }
+  function toast(msg) {
+    const t = document.createElement("div");
+    t.className = "toast";
+    t.textContent = msg;
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), 3200);
+  }
+  function timesOverlap(s1, e1, s2, e2) {
+    return s1 < e2 && s2 < e1;
+  }
+
+  // ---------- Tabs ----------
+  $all("nav.tabs button").forEach(btn => {
+    btn.addEventListener("click", () => {
+      $all("nav.tabs button").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      $all("section.panel").forEach(p => p.classList.remove("active"));
+      $("#panel-" + btn.dataset.tab).classList.add("active");
+      if (btn.dataset.tab === "mine") renderMine();
+    });
+  });
+  $all(".admin-sub button").forEach(btn => {
+    btn.addEventListener("click", () => {
+      $all(".admin-sub button").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      $all(".sub-panel").forEach(p => p.classList.remove("active"));
+      $("#sub-" + btn.dataset.sub).classList.add("active");
+    });
+  });
+
+  // ---------- API (Google Apps Script backend, replaces Claude db) ----------
+  const API_URL = "https://script.google.com/macros/s/AKfycbw11ot9FLNMm3GvEX_7tE346C65gfC1JDq1wq8sxoVxlvB5VUIxXHuOCeIKfZtsIMiN/exec";
+  let pollTimer = null;
+
+  async function apiList() {
+    const res = await fetch(API_URL + "?action=list");
+    if (!res.ok) throw new Error("list failed: " + res.status);
+    return res.json();
+  }
+  async function apiPost(action, data) {
+    const res = await fetch(API_URL + "?action=" + encodeURIComponent(action), {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(data || {})
+    });
+    if (!res.ok) throw new Error(action + " failed: " + res.status);
+    const json = await res.json();
+    if (json && json.error) throw new Error(json.error);
+    return json;
+  }
+
+  function coerceRoom(r) {
+    return { ...r, capacity: r.capacity === "" || r.capacity == null ? null : Number(r.capacity) };
+  }
+  function coerceSchedule(s) {
+    return { ...s, dayOfWeek: Number(s.dayOfWeek) };
+  }
+
+  async function loadAll(silentErrors) {
+    try {
+      const data = await apiList();
+      rooms = (data.rooms || []).map(coerceRoom);
+      schedule = (data.schedule || []).map(coerceSchedule);
+      bookings = data.bookings || [];
+      onRoomsChanged();
+      onScheduleChanged();
+      onBookingsChanged();
+    } catch (e) {
+      console.error(e);
+      if (!silentErrors) toast("โหลดข้อมูลไม่สำเร็จ ตรวจสอบการเชื่อมต่ออินเทอร์เน็ต");
+    }
+  }
+
+  // ---------- Init ----------
+  async function initDb() {
+    if (!API_URL || API_URL.indexOf("PASTE_YOUR_WEB_APP_URL_HERE") !== -1) {
+      toast("ยังไม่ได้ตั้งค่า API_URL ในไฟล์นี้ ระบบจะยังใช้งานไม่ได้");
+      return;
+    }
+    db = true; // marks the backend as configured; actual calls go through apiList/apiPost
+    const searchBtn = $("#search-btn");
+    const originalSearchText = searchBtn.textContent;
+    searchBtn.disabled = true;
+    searchBtn.textContent = "กำลังโหลดข้อมูลห้อง...";
+    await loadAll();
+    searchBtn.disabled = false;
+    searchBtn.textContent = originalSearchText;
+    if (pollTimer) clearInterval(pollTimer);
+    pollTimer = setInterval(() => loadAll(true), 8000);
+  }
+
+  function onRoomsChanged() {
+    renderRoomsTable();
+    renderRoomSelect();
+    if (lastQuery) runSearch(true);
+  }
+  function onScheduleChanged() {
+    renderScheduleTable();
+    if (lastQuery) runSearch(true);
+  }
+  function onBookingsChanged() {
+    renderBookingsTable();
+    if (lastQuery) runSearch(true);
+    renderMine();
+  }
+
+  // ---------- Booking search ----------
+  $("#search-btn").addEventListener("click", () => runSearch(false));
+
+  function runSearch(silent) {
+    const date = $("#q-date").value;
+    const start = $("#q-start").value;
+    const end = $("#q-end").value;
+    if (!date || !start || !end) {
+      if (!silent) toast("กรุณาระบุวันที่ เวลาเริ่ม และเวลาสิ้นสุด");
+      return;
+    }
+    if (start >= end) {
+      if (!silent) toast("เวลาสิ้นสุดต้องอยู่หลังเวลาเริ่ม");
+      return;
+    }
+    if (start < "12:00" && end > "12:00") {
+      if (!silent) toast("ช่วงเวลาสอบต้องไม่คาบพักกลางวัน (12.00-13.00 น.) กรุณาเลือกช่วงเช้าหรือช่วงบ่ายแยกกัน");
+      return;
+    }
+    lastQuery = { date, start, end };
+    const dow = new Date(date + "T00:00:00").getDay();
+
+    const results = rooms.map(room => {
+      const classConflict = schedule.find(s =>
+        s.roomId === room.id && s.dayOfWeek === dow && timesOverlap(start, end, s.startTime, s.endTime)
+      );
+      if (classConflict) {
+        return { room, status: "busy", reason: "มีคาบเรียน " + escapeHtml(classConflict.subject || "") + " เวลา " + classConflict.startTime + "–" + classConflict.endTime };
+      }
+      const bookingConflict = bookings.find(b =>
+        b.roomId === room.id && b.date === date && b.status !== "cancelled" && timesOverlap(start, end, b.startTime, b.endTime)
+      );
+      if (bookingConflict) {
+        return { room, status: "busy", reason: "มีการจองแล้ว: " + escapeHtml(bookingConflict.subject || "") + " (" + bookingConflict.startTime + "–" + bookingConflict.endTime + ")" };
+      }
+      return { room, status: "available", reason: "" };
+    }).sort((a, b) => {
+      const order = { available: 0, busy: 1 };
+      return order[a.status] - order[b.status];
+    });
+
+    $("#results-sheet").style.display = "block";
+    const list = $("#room-list");
+    if (rooms.length === 0) {
+      list.innerHTML = '<div class="empty">ยังไม่มีห้องในระบบ กรุณาให้ผู้ดูแลเพิ่มห้องที่แท็บ "จัดการระบบ" ก่อน</div>';
+      return;
+    }
+    list.innerHTML = results.map(r => {
+      const statusLabel = r.status === "available" ? "ว่าง" : "ไม่ว่าง";
+      const canBook = r.status === "available";
+      return '<div class="room-card ' + r.status + '">' +
+        '<div>' +
+          '<div class="rc-name">' + escapeHtml(r.room.name) + '</div>' +
+          '<div class="rc-meta">' + escapeHtml(r.room.building || "") + (r.room.floor ? " ชั้น " + escapeHtml(r.room.floor) : "") + ' · ความจุ ' + (r.room.capacity || "-") + ' ที่นั่ง' + (r.room.type ? ' · ' + escapeHtml(r.room.type) : '') + '</div>' +
+          (r.reason ? '<div class="rc-reason">' + r.reason + '</div>' : '') +
+        '</div>' +
+        '<div style="text-align:right;">' +
+          '<div class="rc-status">' + statusLabel + '</div>' +
+          (canBook ? '<button class="btn small" style="margin-top:6px;" data-room="' + r.room.id + '">เลือกห้องนี้</button>' : '') +
+        '</div>' +
+      '</div>';
+    }).join("");
+
+    $all("#room-list button[data-room]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        chosenRoom = rooms.find(rm => rm.id === btn.dataset.room);
+        openBookingForm();
+      });
+    });
+  }
+
+  function openBookingForm() {
+    if (!chosenRoom) return;
+    $("#chosen-room-label").textContent = chosenRoom.name;
+    $("#form-sheet").style.display = "block";
+    $("#form-sheet").scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+  $("#cancel-form-btn").addEventListener("click", () => {
+    $("#form-sheet").style.display = "none";
+    chosenRoom = null;
+  });
+
+  $("#confirm-book-btn").addEventListener("click", async () => {
+    if (!db || !chosenRoom || !lastQuery) return;
+    const subject = $("#b-subject").value.trim();
+    const name = $("#b-name").value.trim();
+    const sid = $("#b-sid").value.trim();
+    const chair = $("#b-chair").value.trim();
+    if (!subject || !name || !sid || !chair) {
+      toast("กรุณาเลือกกระบวนวิชา กรอกชื่อและรหัสนักศึกษา และเลือกอาจารย์ประธานสอบ");
+      return;
+    }
+    const btn = $("#confirm-book-btn");
+    btn.disabled = true;
+    const originalBtnText = btn.textContent;
+    try {
+      // Reload fresh data right before checking, to reduce race conditions
+      // (this app polls rather than getting instant live updates).
+      btn.textContent = "กำลังตรวจสอบห้องว่าง...";
+      await loadAll(true);
+
+      const dupBooking = bookings.find(b =>
+        b.status !== "cancelled" &&
+        (b.studentId || "").trim().toLowerCase() === sid.toLowerCase() &&
+        b.subject === subject
+      );
+      if (dupBooking) {
+        const proceed = await showConfirmModal(
+          "พบการจองเดิมของคุณ",
+          "คุณมีการจองไว้แล้วสำหรับวิชา " + dupBooking.subject + "\nห้อง " + dupBooking.roomName + " วันที่ " + dupBooking.date + " เวลา " + dupBooking.startTime + "–" + dupBooking.endTime + "\n\nต้องการจองรายการนี้เพิ่มอีกหรือไม่?"
+        );
+        if (!proceed) { $("#form-sheet").style.display = "none"; return; }
+      }
+
+      const dow = new Date(lastQuery.date + "T00:00:00").getDay();
+      const stillConflict = schedule.some(s => s.roomId === chosenRoom.id && s.dayOfWeek === dow && timesOverlap(lastQuery.start, lastQuery.end, s.startTime, s.endTime)) ||
+        bookings.some(b => b.roomId === chosenRoom.id && b.date === lastQuery.date && b.status !== "cancelled" && timesOverlap(lastQuery.start, lastQuery.end, b.startTime, b.endTime));
+      if (stillConflict) {
+        toast("ห้องนี้ถูกจองไปแล้วในช่วงเวลานี้ กรุณาค้นหาใหม่");
+        $("#form-sheet").style.display = "none";
+        runSearch(true);
+        return;
+      }
+      btn.textContent = "กำลังบันทึกการจอง...";
+      const ref = await apiPost("addBooking", {
+        roomId: chosenRoom.id,
+        roomName: chosenRoom.name,
+        date: lastQuery.date,
+        startTime: lastQuery.start,
+        endTime: lastQuery.end,
+        subject: subject, bookerName: name, studentId: sid, examChair: chair,
+        status: "confirmed",
+        createdAt: new Date().toISOString()
+      });
+      rememberMyBooking(ref.id);
+      toast("จองห้อง " + chosenRoom.name + " สำเร็จ");
+      $("#form-sheet").style.display = "none";
+      ["#b-name","#b-sid"].forEach(sel => $(sel).value = "");
+      $("#b-subject").value = "";
+      $("#b-chair").value = "";
+      chosenRoom = null;
+      btn.textContent = "กำลังอัปเดตรายการ...";
+      await loadAll(true);
+      runSearch(true);
+    } catch (e) {
+      console.error(e);
+      toast("บันทึกการจองไม่สำเร็จ กรุณาลองใหม่");
+    } finally {
+      btn.disabled = false;
+      btn.textContent = originalBtnText;
+    }
+  });
+
+  // ---------- My bookings: search by student ID (works across devices), ----------
+  // ---------- plus localStorage as a same-device convenience.            ----------
+  let mineSearchSid = null;
+
+  function myBookingIds() {
+    try { return JSON.parse(localStorage.getItem("myBookingIds") || "[]"); }
+    catch (e) { return []; }
+  }
+  function rememberMyBooking(id) {
+    try {
+      const ids = myBookingIds();
+      ids.push(id);
+      localStorage.setItem("myBookingIds", JSON.stringify(ids));
+    } catch (e) {}
+  }
+
+  $("#mine-search-btn").addEventListener("click", () => {
+    const val = $("#mine-search-sid").value.trim();
+    if (!val) { toast("กรุณากรอกรหัสนักศึกษา"); return; }
+    mineSearchSid = val;
+    renderMine();
+  });
+  $("#mine-search-sid").addEventListener("keydown", (e) => {
+    if (e.key === "Enter") $("#mine-search-btn").click();
+  });
+
+  function renderMine() {
+    const ids = new Set(myBookingIds());
+    const mine = bookings.filter(b =>
+      ids.has(b.id) ||
+      (mineSearchSid && (b.studentId || "").trim().toLowerCase() === mineSearchSid.toLowerCase())
+    );
+    const tbody = $("#mine-table tbody");
+    if (mine.length === 0) {
+      tbody.innerHTML = "";
+      $("#mine-empty").style.display = "block";
+      $("#mine-empty").textContent = mineSearchSid
+        ? "ไม่พบการจองของรหัสนักศึกษานี้"
+        : "ยังไม่มีการจองที่ทำจากเบราว์เซอร์นี้ — ลองค้นหาด้วยรหัสนักศึกษาด้านบนแทน";
+      return;
+    }
+    $("#mine-empty").style.display = "none";
+    tbody.innerHTML = mine.map(b => {
+      const cancelled = b.status === "cancelled";
+      return "<tr" + (cancelled ? ' style="opacity:0.5;"' : '') + ">" +
+        "<td>" + escapeHtml(b.date) + "</td>" +
+        "<td>" + b.startTime + "–" + b.endTime + "</td>" +
+        "<td>" + escapeHtml(b.roomName) + "</td>" +
+        "<td>" + escapeHtml(b.subject) + (cancelled ? ' <span class="tag">ยกเลิกแล้ว</span>' : '') + "</td>" +
+        "<td>" + escapeHtml(b.examChair || "-") + "</td>" +
+        "<td style='white-space:nowrap;'>" + (cancelled ? "" :
+          '<button class="btn secondary small" data-edit="' + b.id + '" style="margin-right:6px;">แก้ไข</button>' +
+          '<button class="btn danger" data-cancel="' + b.id + '">ยกเลิก</button>'
+        ) + "</td>" +
+      "</tr>";
+    }).join("");
+    $all("#mine-table button[data-cancel]").forEach(btn => {
+      btn.addEventListener("click", () => cancelBooking(btn.dataset.cancel));
+    });
+    $all("#mine-table button[data-edit]").forEach(btn => {
+      btn.addEventListener("click", () => editBooking(btn.dataset.edit));
+    });
+  }
+
+  async function editBooking(id) {
+    const b = bookings.find(x => x.id === id);
+    if (!b) return;
+    const proceed = await showConfirmModal(
+      "เปลี่ยนห้อง/เวลา",
+      "ระบบจะยกเลิกการจองเดิม (ห้อง " + b.roomName + " วันที่ " + b.date + " เวลา " + b.startTime + "–" + b.endTime + ") แล้วพาไปเลือกวันเวลาใหม่\n\nต้องการดำเนินการต่อหรือไม่?"
+    );
+    if (!proceed) return;
+    await cancelBooking(id);
+    $("#b-subject").value = b.subject || "";
+    $("#b-name").value = b.bookerName || "";
+    $("#b-sid").value = b.studentId || "";
+    $("#b-chair").value = b.examChair || "";
+    document.querySelector('nav.tabs button[data-tab="book"]').click();
+    toast("ยกเลิกรายการเดิมแล้ว เลือกวันเวลาที่ต้องการใหม่แล้วกดค้นหาห้องว่างได้เลย");
+  }
+
+  async function cancelBooking(id) {
+    if (!db) return;
+    try {
+      await apiPost("cancelBooking", { id });
+      toast("ยกเลิกการจองแล้ว");
+      await loadAll(true);
+    } catch (e) {
+      console.error(e);
+      toast("ยกเลิกไม่สำเร็จ");
+    }
+  }
+
+  // ---------- Admin: rooms ----------
+  $("#add-room-btn").addEventListener("click", async () => {
+    if (!db) return;
+    const name = $("#r-name").value.trim();
+    const building = $("#r-building").value.trim();
+    const floor = $("#r-floor").value.trim();
+    const capacity = parseInt($("#r-capacity").value || "0", 10);
+    const type = $("#r-type").value.trim();
+    if (!name) { toast("กรุณากรอกชื่อ/รหัสห้อง"); return; }
+    try {
+      await apiPost("addRoom", { name, building, floor, capacity: capacity || null, type, createdAt: new Date().toISOString() });
+      ["#r-name","#r-building","#r-floor","#r-capacity","#r-type"].forEach(sel => $(sel).value = "");
+      toast("เพิ่มห้อง " + name + " แล้ว");
+      await loadAll(true);
+    } catch (e) {
+      console.error(e);
+      toast("เพิ่มห้องไม่สำเร็จ");
+    }
+  });
+
+  function renderRoomsTable() {
+    $("#rooms-count").textContent = rooms.length ? "(" + rooms.length + " ห้อง)" : "";
+    const tbody = $("#rooms-table tbody");
+    if (rooms.length === 0) {
+      tbody.innerHTML = "";
+      $("#rooms-empty").style.display = "block";
+      return;
+    }
+    $("#rooms-empty").style.display = "none";
+    tbody.innerHTML = rooms.slice().sort((a,b) => (a.name||"").localeCompare(b.name||"")).map(r =>
+      "<tr><td>" + escapeHtml(r.name) + "</td><td>" + escapeHtml(r.building || "-") + (r.floor ? " / " + escapeHtml(r.floor) : "") + "</td>" +
+      "<td>" + (r.capacity || "-") + "</td><td>" + escapeHtml(r.type || "-") + "</td>" +
+      "<td><button class='btn danger' data-del-room='" + r.id + "'>ลบ</button></td></tr>"
+    ).join("");
+    $all("#rooms-table button[data-del-room]").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        if (!db) return;
+        try { await apiPost("deleteRoom", { id: btn.dataset.delRoom }); toast("ลบห้องแล้ว"); await loadAll(true); }
+        catch (e) { console.error(e); toast("ลบไม่สำเร็จ"); }
+      });
+    });
+  }
+
+  function renderRoomSelect() {
+    const sel = $("#s-room");
+    const current = sel.value;
+    sel.innerHTML = rooms.slice().sort((a,b) => (a.name||"").localeCompare(b.name||"")).map(r =>
+      '<option value="' + r.id + '">' + escapeHtml(r.name) + '</option>'
+    ).join("");
+    if (current) sel.value = current;
+  }
+
+  // ---------- Admin: schedule ----------
+  $all("#s-day-picker button").forEach(btn => {
+    btn.addEventListener("click", () => {
+      $all("#s-day-picker button").forEach(b => b.classList.remove("sel"));
+      btn.classList.add("sel");
+      selectedDay = parseInt(btn.dataset.day, 10);
+    });
+  });
+
+  $("#add-schedule-btn").addEventListener("click", async () => {
+    if (!db) return;
+    const roomId = $("#s-room").value;
+    const start = $("#s-start").value;
+    const end = $("#s-end").value;
+    const subject = $("#s-subject").value.trim();
+    if (selectedDay === null || !roomId || !start || !end || !subject) {
+      toast("กรุณาเลือกวัน ห้อง เวลา และรายวิชาให้ครบ");
+      return;
+    }
+    if (start >= end) { toast("เวลาสิ้นสุดต้องอยู่หลังเวลาเริ่ม"); return; }
+    const room = rooms.find(r => r.id === roomId);
+    try {
+      await apiPost("addSchedule", {
+        roomId, roomName: room ? room.name : "", dayOfWeek: selectedDay,
+        startTime: start, endTime: end, subject, createdAt: new Date().toISOString()
+      });
+      $("#s-subject").value = "";
+      toast("เพิ่มคาบเรียนแล้ว");
+      await loadAll(true);
+    } catch (e) {
+      console.error(e);
+      toast("เพิ่มไม่สำเร็จ");
+    }
+  });
+
+  function renderScheduleTable() {
+    $("#schedule-count").textContent = schedule.length ? "(" + schedule.length + " คาบ)" : "";
+    const tbody = $("#schedule-table tbody");
+    if (schedule.length === 0) {
+      tbody.innerHTML = "";
+      $("#schedule-empty").style.display = "block";
+      return;
+    }
+    $("#schedule-empty").style.display = "none";
+    const dayOrder = [1,2,3,4,5,6,0];
+    tbody.innerHTML = schedule.slice().sort((a,b) => {
+      const da = dayOrder.indexOf(a.dayOfWeek), db_ = dayOrder.indexOf(b.dayOfWeek);
+      if (da !== db_) return da - db_;
+      return (a.startTime||"").localeCompare(b.startTime||"");
+    }).map(s =>
+      "<tr><td>" + DAY_LABEL[s.dayOfWeek] + "</td><td>" + s.startTime + "–" + s.endTime + "</td>" +
+      "<td>" + escapeHtml(s.roomName) + "</td><td>" + escapeHtml(s.subject) + "</td>" +
+      "<td><button class='btn danger' data-del-sched='" + s.id + "'>ลบ</button></td></tr>"
+    ).join("");
+    $all("#schedule-table button[data-del-sched]").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        if (!db) return;
+        try { await apiPost("deleteSchedule", { id: btn.dataset.delSched }); toast("ลบคาบเรียนแล้ว"); await loadAll(true); }
+        catch (e) { console.error(e); toast("ลบไม่สำเร็จ"); }
+      });
+    });
+  }
+
+  // ---------- Admin: all bookings ----------
+  function renderBookingsTable() {
+    const active = bookings.filter(b => b.status !== "cancelled");
+    $("#bookings-count").textContent = bookings.length ? "(" + active.length + " รายการ ที่ยังไม่ถูกยกเลิก)" : "";
+    const tbody = $("#bookings-table tbody");
+    if (bookings.length === 0) {
+      tbody.innerHTML = "";
+      $("#bookings-empty").style.display = "block";
+      return;
+    }
+    $("#bookings-empty").style.display = "none";
+    tbody.innerHTML = bookings.slice().sort((a,b) => (a.date||"").localeCompare(b.date||"") || (a.startTime||"").localeCompare(b.startTime||"")).map(b => {
+      const cancelled = b.status === "cancelled";
+      return "<tr" + (cancelled ? ' style="opacity:0.5;"' : '') + ">" +
+        "<td>" + escapeHtml(b.date) + "</td><td>" + b.startTime + "–" + b.endTime + "</td>" +
+        "<td>" + escapeHtml(b.roomName) + "</td><td>" + escapeHtml(b.subject) + "</td>" +
+        "<td>" + escapeHtml(b.bookerName) + (b.studentId ? " (" + escapeHtml(b.studentId) + ")" : "") + "</td>" +
+        "<td>" + escapeHtml(b.examChair || "-") + "</td>" +
+        "<td>" + (cancelled ? "<span class='tag'>ยกเลิกแล้ว</span>" : "<button class='btn danger' data-admin-cancel='" + b.id + "'>ยกเลิก</button>") + "</td>" +
+      "</tr>";
+    }).join("");
+    $all("#bookings-table button[data-admin-cancel]").forEach(btn => {
+      btn.addEventListener("click", () => cancelBooking(btn.dataset.adminCancel));
+    });
+  }
+
+  // ---------- Populate date/time selects ----------
+  function fmtDateLabel(iso) {
+    const dow = DAY_LABEL[new Date(iso + "T00:00:00").getDay()];
+    const [y, m, d] = iso.split("-");
+    return d + "/" + m + "/" + (parseInt(y, 10) + 543) + " (" + dow + ")";
+  }
+  (function populateSelects() {
+    $("#q-date").innerHTML = EXAM_DATES.map(d => '<option value="' + d + '">' + fmtDateLabel(d) + '</option>').join("");
+    $("#q-start").innerHTML = HOUR_SLOTS.filter(t => t !== "16:00").map(t => '<option value="' + t + '">' + t + ' น.</option>').join("");
+    $("#q-end").innerHTML = HOUR_SLOTS.filter(t => t !== "08:00").map(t => '<option value="' + t + '">' + t + ' น.</option>').join("");
+    $("#q-start").value = "09:00";
+    $("#q-end").value = "12:00";
+    $("#b-chair").innerHTML = '<option value="">— เลือกอาจารย์ —</option>' +
+      TEACHERS.map(t => '<option value="' + t + '">' + t + '</option>').join("");
+  })();
+
+  // ---------- Admin: import seed data extracted from the uploaded schedule file ----------
+  $("#import-seed-btn").addEventListener("click", async () => {
+    if (!db) { toast("ยังไม่พร้อมเชื่อมต่อระบบบันทึกข้อมูล"); return; }
+    const btn = $("#import-seed-btn");
+    btn.disabled = true;
+    btn.textContent = "กำลังนำเข้า... (อาจใช้เวลาสักครู่)";
+    try {
+      const existingNames = new Set(rooms.map(r => r.name));
+      const roomIdByName = {};
+      rooms.forEach(r => { roomIdByName[r.name] = r.id; });
+      let addedRooms = 0;
+      for (const r of ROOMS_SEED) {
+        if (existingNames.has(r.name)) continue;
+        const ref = await apiPost("addRoom", { ...r, createdAt: new Date().toISOString() });
+        roomIdByName[r.name] = ref.id;
+        addedRooms++;
+      }
+      const existingSlots = new Set(schedule.map(s => [s.roomName, s.dayOfWeek, s.startTime, s.endTime, s.subject].join("|")));
+      let addedSlots = 0;
+      for (const [roomName, day, start, end, subject] of SCHEDULE_SEED) {
+        const key = [roomName, day, start, end, subject].join("|");
+        if (existingSlots.has(key)) continue;
+        const roomId = roomIdByName[roomName];
+        if (!roomId) continue;
+        await apiPost("addSchedule", {
+          roomId, roomName, dayOfWeek: day, startTime: start, endTime: end, subject,
+          createdAt: new Date().toISOString()
+        });
+        addedSlots++;
+      }
+      toast("นำเข้าแล้ว: ห้องใหม่ " + addedRooms + " ห้อง, คาบเรียนใหม่ " + addedSlots + " คาบ");
+      await loadAll(true);
+    } catch (e) {
+      console.error(e);
+      toast("นำเข้าไม่สำเร็จ กรุณาลองใหม่");
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "นำเข้าห้อง + ตารางเรียนจากไฟล์ที่แนบ";
+    }
+  });
+
+  initDb();
+})();
+</script>
+</body>
+</html>
