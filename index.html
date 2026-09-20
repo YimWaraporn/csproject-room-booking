@@ -889,7 +889,7 @@
       const dupBooking = bookings.find(b =>
         b.status !== "cancelled" &&
         (b.studentId || "").trim().toLowerCase() === sid.toLowerCase() &&
-        b.subject === subject
+        String(b.subject) === String(subject)
       );
       if (dupBooking) {
         const proceed = await showConfirmModal(
