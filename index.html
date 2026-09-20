@@ -888,8 +888,7 @@
 
       const dupBooking = bookings.find(b =>
         b.status !== "cancelled" &&
-        String(b.studentId || "").trim().toLowerCase() === sid.toLowerCase() &&
-        String(b.subject) === String(subject)
+        String(b.studentId || "").trim().toLowerCase() === sid.toLowerCase()
       );
       if (dupBooking) {
         const proceed = await showConfirmModal(
@@ -899,6 +898,21 @@
         if (!proceed) { $("#form-sheet").style.display = "none"; return; }
         btn.textContent = "กำลังยกเลิกรายการเดิม...";
         await apiPost("cancelBooking", { id: dupBooking.id });
+      }
+
+      const chairConflict = bookings.find(b =>
+        b.status !== "cancelled" &&
+        (!dupBooking || b.id !== dupBooking.id) &&
+        b.examChair === chair &&
+        b.date === lastQuery.date &&
+        timesOverlap(lastQuery.start, lastQuery.end, b.startTime, b.endTime)
+      );
+      if (chairConflict) {
+        const proceedChair = await showConfirmModal(
+          "อาจารย์มีนัดสอบซ้อนเวลา",
+          "อาจารย์ " + chair + " มีนัดสอบอยู่แล้ว\nห้อง " + chairConflict.roomName + " วันที่ " + chairConflict.date + " เวลา " + chairConflict.startTime + "–" + chairConflict.endTime + " (วิชา " + chairConflict.subject + ")\n\nต้องการจองต่อไปหรือไม่? โปรดตรวจสอบกับอาจารย์ก่อนยืนยัน"
+        );
+        if (!proceedChair) { $("#form-sheet").style.display = "none"; return; }
       }
 
       const dow = new Date(lastQuery.date + "T00:00:00").getDay();
@@ -1183,12 +1197,28 @@
   (function populateSelects() {
     $("#q-date").innerHTML = EXAM_DATES.map(d => '<option value="' + d + '">' + fmtDateLabel(d) + '</option>').join("");
     $("#q-start").innerHTML = HOUR_SLOTS.filter(t => t !== "16:00").map(t => '<option value="' + t + '">' + t + ' น.</option>').join("");
-    $("#q-end").innerHTML = HOUR_SLOTS.filter(t => t !== "08:00").map(t => '<option value="' + t + '">' + t + ' น.</option>').join("");
+    updateEndOptions();
     $("#q-start").value = "09:00";
+    updateEndOptions();
     $("#q-end").value = "12:00";
+    $("#q-start").addEventListener("change", () => updateEndOptions());
     $("#b-chair").innerHTML = '<option value="">— เลือกอาจารย์ —</option>' +
       TEACHERS.map(t => '<option value="' + t + '">' + t + '</option>').join("");
   })();
+
+  function updateEndOptions() {
+    const start = $("#q-start").value || "08:00";
+    const prevEnd = $("#q-end").value;
+    // Only offer times strictly after the chosen start, and never crossing
+    // the 12:00-13:00 lunch break.
+    const validEnds = HOUR_SLOTS.filter(t => t > start && !(start < "12:00" && t > "12:00"));
+    $("#q-end").innerHTML = validEnds.map(t => '<option value="' + t + '">' + t + ' น.</option>').join("");
+    if (validEnds.includes(prevEnd)) {
+      $("#q-end").value = prevEnd;
+    } else if (validEnds.length) {
+      $("#q-end").value = validEnds[0];
+    }
+  }
 
   // ---------- Admin: import seed data extracted from the uploaded schedule file ----------
   $("#import-seed-btn").addEventListener("click", async () => {
