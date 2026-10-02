@@ -698,6 +698,9 @@
   // ห้องที่ถูกใช้สอบวิชาอื่น (เฉพาะวันที่ระบุ ไม่ใช่ตารางเรียนประจำสัปดาห์) จากไฟล์ตารางสอบเพิ่ม.xlsx
   // แต่ละแถว: [วันที่ (ISO), เวลาเริ่ม, เวลาสิ้นสุด, ห้อง]
   const OTHER_EXAM_MARKER = "ล็อกห้อง - สอบวิชาอื่น";
+  // ตารางเรียนประจำสัปดาห์ (SCHEDULE_SEED) ใช้เช็คชนเฉพาะวันที่ <= วันนี้เท่านั้น
+  // ตั้งแต่ 19 ต.ค. เป็นต้นไปเป็นคนละช่วงกับตารางเรียน เช็คจากรายการจองจริงอย่างเดียว
+  const SCHEDULE_APPLIES_UNTIL = "2026-10-16";
   const OTHER_EXAM_SEED = [
     ["2026-10-19","15:30","18:30","CSB209"],
     ["2026-10-19","15:30","18:30","CSB210"],
@@ -866,8 +869,9 @@
     lastQuery = { date, start, end };
     const dow = new Date(date + "T00:00:00").getDay();
 
+    const scheduleApplies = date <= SCHEDULE_APPLIES_UNTIL;
     const results = rooms.map(room => {
-      const classConflict = schedule.find(s =>
+      const classConflict = scheduleApplies && schedule.find(s =>
         s.roomId === room.id && s.dayOfWeek === dow && timesOverlap(start, end, s.startTime, s.endTime)
       );
       if (classConflict) {
@@ -975,7 +979,7 @@
       }
 
       const dow = new Date(lastQuery.date + "T00:00:00").getDay();
-      const stillConflict = schedule.some(s => s.roomId === chosenRoom.id && s.dayOfWeek === dow && timesOverlap(lastQuery.start, lastQuery.end, s.startTime, s.endTime)) ||
+      const stillConflict = (lastQuery.date <= SCHEDULE_APPLIES_UNTIL && schedule.some(s => s.roomId === chosenRoom.id && s.dayOfWeek === dow && timesOverlap(lastQuery.start, lastQuery.end, s.startTime, s.endTime))) ||
         bookings.some(b => b.roomId === chosenRoom.id && b.date === lastQuery.date && b.status !== "cancelled" && timesOverlap(lastQuery.start, lastQuery.end, b.startTime, b.endTime));
       if (stillConflict) {
         toast("ห้องนี้ถูกจองไปแล้วในช่วงเวลานี้ กรุณาค้นหาใหม่");
