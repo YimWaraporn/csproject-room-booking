@@ -531,7 +531,7 @@
     "2026-10-12","2026-10-14","2026-10-15","2026-10-16",
     "2026-10-19","2026-10-20","2026-10-21","2026-10-22",
     "2026-10-26","2026-10-27","2026-10-28","2026-10-29","2026-10-30"];
-  const HOUR_SLOTS = ["08:00","09:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00"];
+  const HOUR_SLOTS = ["08:00","09:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00","18:00"];
   const ADMIN_PIN = "6737";
 
   // Admin tab is hidden from the normal menu. Clicking the page title 5 times
@@ -1259,7 +1259,7 @@
   }
   (function populateSelects() {
     $("#q-date").innerHTML = EXAM_DATES.map(d => '<option value="' + d + '">' + fmtDateLabel(d) + '</option>').join("");
-    $("#q-start").innerHTML = HOUR_SLOTS.filter(t => t !== "16:00").map(t => '<option value="' + t + '">' + t + ' น.</option>').join("");
+    $("#q-start").innerHTML = HOUR_SLOTS.filter(t => t !== HOUR_SLOTS[HOUR_SLOTS.length - 1]).map(t => '<option value="' + t + '">' + t + ' น.</option>').join("");
     updateEndOptions();
     $("#q-start").value = "09:00";
     updateEndOptions();
