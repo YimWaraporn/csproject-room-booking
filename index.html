@@ -1009,7 +1009,8 @@
         status: "confirmed",
         createdAt: new Date().toISOString()
       });
-      rememberMyBooking(ref.id);
+      mineSearchSid = sid;
+      $("#mine-search-sid").value = sid;
       toast("จองห้อง " + chosenRoom.name + " สำเร็จ");
       $("#form-sheet").style.display = "none";
       ["#b-name","#b-sid"].forEach(sel => $(sel).value = "");
@@ -1032,17 +1033,6 @@
   // ---------- plus localStorage as a same-device convenience.            ----------
   let mineSearchSid = null;
 
-  function myBookingIds() {
-    try { return JSON.parse(localStorage.getItem("myBookingIds") || "[]"); }
-    catch (e) { return []; }
-  }
-  function rememberMyBooking(id) {
-    try {
-      const ids = myBookingIds();
-      ids.push(id);
-      localStorage.setItem("myBookingIds", JSON.stringify(ids));
-    } catch (e) {}
-  }
 
   $("#mine-search-btn").addEventListener("click", () => {
     const val = $("#mine-search-sid").value.trim();
@@ -1055,18 +1045,19 @@
   });
 
   function renderMine() {
-    const ids = new Set(myBookingIds());
-    const mine = bookings.filter(b =>
-      ids.has(b.id) ||
-      (mineSearchSid && String(b.studentId || "").trim().toLowerCase() === mineSearchSid.toLowerCase())
-    );
+    // แสดงเฉพาะการจองที่รหัสนักศึกษาตรงกับที่ค้นหาเท่านั้น (ไม่ดึงจากความจำของเบราว์เซอร์
+    // เพราะเครื่องเดียวกันอาจมีหลายคนใช้ แล้วจะเห็น/ยกเลิกการจองของคนอื่นได้)
+    const sidQuery = mineSearchSid ? mineSearchSid.toLowerCase() : null;
+    const mine = sidQuery
+      ? bookings.filter(b => String(b.studentId || "").trim().toLowerCase() === sidQuery)
+      : [];
     const tbody = $("#mine-table tbody");
     if (mine.length === 0) {
       tbody.innerHTML = "";
       $("#mine-empty").style.display = "block";
       $("#mine-empty").textContent = mineSearchSid
         ? "ไม่พบการจองของรหัสนักศึกษานี้"
-        : "ยังไม่มีการจองที่ทำจากเบราว์เซอร์นี้ — ลองค้นหาด้วยรหัสนักศึกษาด้านบนแทน";
+        : "กรอกรหัสนักศึกษาด้านบนแล้วกดค้นหา เพื่อดูการจองของคุณ";
       return;
     }
     $("#mine-empty").style.display = "none";
