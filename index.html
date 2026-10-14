@@ -701,6 +701,13 @@
   // ตารางเรียนประจำสัปดาห์ (SCHEDULE_SEED) ใช้เช็คชนเฉพาะวันที่ <= วันนี้เท่านั้น
   // ตั้งแต่ 19 ต.ค. เป็นต้นไปเป็นคนละช่วงกับตารางเรียน เช็คจากรายการจองจริงอย่างเดียว
   const SCHEDULE_APPLIES_UNTIL = "2026-10-16";
+  // ห้องที่ล็อกไม่ให้จองตั้งแต่วันที่กำหนดเป็นต้นไป (การจองเดิมที่มีอยู่ไม่ถูกลบ)
+  const ROOM_LOCKS = [
+    { room: "CSB202", from: "2026-10-19" },
+  ];
+  function isRoomLocked(roomName, date) {
+    return ROOM_LOCKS.some(l => l.room === roomName && date >= l.from);
+  }
   const OTHER_EXAM_SEED = [
     ["2026-10-19","15:30","18:30","CSB209"],
     ["2026-10-19","15:30","18:30","CSB210"],
@@ -871,6 +878,9 @@
 
     const scheduleApplies = date <= SCHEDULE_APPLIES_UNTIL;
     const results = rooms.map(room => {
+      if (isRoomLocked(room.name, date)) {
+        return { room, status: "busy", reason: "ห้องนี้ถูกล็อก ไม่เปิดให้จอง" };
+      }
       const classConflict = scheduleApplies && schedule.find(s =>
         s.roomId === room.id && s.dayOfWeek === dow && timesOverlap(start, end, s.startTime, s.endTime)
       );
@@ -979,7 +989,8 @@
       }
 
       const dow = new Date(lastQuery.date + "T00:00:00").getDay();
-      const stillConflict = (lastQuery.date <= SCHEDULE_APPLIES_UNTIL && schedule.some(s => s.roomId === chosenRoom.id && s.dayOfWeek === dow && timesOverlap(lastQuery.start, lastQuery.end, s.startTime, s.endTime))) ||
+      const stillConflict = isRoomLocked(chosenRoom.name, lastQuery.date) ||
+        (lastQuery.date <= SCHEDULE_APPLIES_UNTIL && schedule.some(s => s.roomId === chosenRoom.id && s.dayOfWeek === dow && timesOverlap(lastQuery.start, lastQuery.end, s.startTime, s.endTime))) ||
         bookings.some(b => b.roomId === chosenRoom.id && b.date === lastQuery.date && b.status !== "cancelled" && timesOverlap(lastQuery.start, lastQuery.end, b.startTime, b.endTime));
       if (stillConflict) {
         toast("ห้องนี้ถูกจองไปแล้วในช่วงเวลานี้ กรุณาค้นหาใหม่");
